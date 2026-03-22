@@ -1,0 +1,13 @@
+{
+  "name": "masanami-harness",
+  "owner": {
+    "name": "masanami"
+  },
+  "plugins": [
+    {
+      "name": "harness",
+      "source": "./",
+      "description": "AI駆動開発チームのための汎用ハーネスプラグイン - エージェント、スキル、フックの統合パッケージ"
+    }
+  ]
+}

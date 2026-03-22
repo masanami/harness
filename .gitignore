@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Claude Code (personal settings)
+.claude/settings.local.json
+
+# Build
+dist/
+build/
+out/
+
+# Logs
+*.log
