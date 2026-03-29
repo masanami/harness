@@ -1,41 +1,47 @@
-# sandboxed-run スキル
+---
+name: sandboxed-run
+description: "devcontainer環境を構築する設定ファイルを生成する。Triggers on: '/sandboxed-run', 'devcontainerを設定', 'サンドボックス環境を作って'"
+---
 
-## 概要
+# devcontainer 環境構築
 
-devcontainer 環境で Claude Code を安全に実行するためのサンドボックス実行スキルです。`--dangerously-skip-permissions` を使った自律実行を、コンテナの隔離環境で安全に行えるようにします。
-
-このスキルはオプションです。devcontainer を使用するプロジェクト向けに、即座に利用できるセットアップ手順と設定例を提供します。
+プロジェクトを分析し、Claude Code をサンドボックス環境で安全に実行するための devcontainer 設定ファイルを生成します。
 
 ---
 
-## なぜdevcontainerか
+## 手順
 
-| 課題 | devcontainerによる解決 |
-|------|----------------------|
-| ホストOS への意図しない変更 | コンテナ内に変更が封じ込められる |
-| 本番環境への誤操作 | ネットワーク制御でアクセスを制限可能 |
-| 依存関係の汚染 | コンテナ内の独立した環境で実行 |
-| チームメンバー間の環境差異 | 同一コンテナイメージで統一された環境 |
+### 1. 既存設定の確認
 
----
+`.devcontainer/` ディレクトリが既に存在する場合はユーザーに上書き・マージ・中止を確認する。
 
-## セットアップ手順
+### 2. プロジェクト情報の検出
 
-### 1. devcontainer の設定ファイルを作成
+言語・パッケージマネージャを検出し、適切なベースイメージと features を決定する。
 
-プロジェクトルートに `.devcontainer/devcontainer.json` を作成します。
+| 検出結果 | ベースイメージ | 追加 features |
+|---------|-------------|--------------|
+| Node.js | `mcr.microsoft.com/devcontainers/base:ubuntu-22.04` | `ghcr.io/devcontainers/features/node:1` |
+| Python | `mcr.microsoft.com/devcontainers/python:3.11` | - |
+| Go | `mcr.microsoft.com/devcontainers/go:1` | - |
+| Rust | `mcr.microsoft.com/devcontainers/rust:1` | - |
+| 不明 | `mcr.microsoft.com/devcontainers/base:ubuntu-22.04` | - |
+
+### 3. 設定ファイルの生成
+
+以下のファイルを生成する。
+
+#### `.devcontainer/devcontainer.json`
 
 ```json
 {
-  "name": "Claude Code Sandbox",
-  "image": "mcr.microsoft.com/devcontainers/base:ubuntu-22.04",
+  "name": "{プロジェクト名} Sandbox",
+  "image": "{検出したベースイメージ}",
   "features": {
     "ghcr.io/devcontainers/features/git:1": {},
-    "ghcr.io/devcontainers/features/node:1": {
-      "version": "lts"
-    }
+    "{言語に応じた feature}": {}
   },
-  "postCreateCommand": "npm install -g @anthropic-ai/claude-code",
+  "postCreateCommand": "npm install -g @anthropic-ai/claude-code && mkdir -p ~/.claude && cp /workspace/.devcontainer/claude-settings.json ~/.claude/settings.json",
   "mounts": [
     "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached"
   ],
@@ -46,26 +52,9 @@ devcontainer 環境で Claude Code を安全に実行するためのサンドボ
 }
 ```
 
-### 2. denyリストをプロジェクトに配置
+#### `.devcontainer/claude-settings.json`
 
-```bash
-# harness の denylist.conf をプロジェクトにコピー（またはシンボリックリンク）
-cp /path/to/harness/scripts/denylist.conf .devcontainer/denylist.conf
-```
-
-必要に応じてプロジェクト固有のルールを追加します。
-
-### 3. Claude Code のフック設定
-
-`.devcontainer/devcontainer.json` に Claude Code の設定を追加します。
-
-```json
-{
-  "postCreateCommand": "npm install -g @anthropic-ai/claude-code && mkdir -p ~/.claude && cp /workspace/.devcontainer/claude-settings.json ~/.claude/settings.json"
-}
-```
-
-`.devcontainer/claude-settings.json` を作成します。
+`block-dangerous.sh` の PreToolUse フックを設定する。
 
 ```json
 {
@@ -85,53 +74,24 @@ cp /path/to/harness/scripts/denylist.conf .devcontainer/denylist.conf
 }
 ```
 
-### 4. devcontainer 内で Claude Code を起動
+#### `.devcontainer/denylist.conf`
 
-```bash
-# VS Code の "Reopen in Container" またはコマンドラインから
-devcontainer exec --workspace-folder . claude --dangerously-skip-permissions
-```
-
----
-
-## 最小構成例
-
-シンプルに試したい場合の最小構成です。
+`scripts/denylist.conf` をコピーし、プロジェクト固有のルールをユーザーが追加できるようコメントを末尾に追加する。
 
 ```
-your-project/
-├── .devcontainer/
-│   ├── devcontainer.json
-│   └── denylist.conf       # カスタムdenyリスト（任意）
-└── scripts/
-    ├── block-dangerous.sh   # harness から持ってくる
-    └── denylist.conf        # harness から持ってくる
+# プロジェクト固有のdenyルールをここに追加
+# 例: kubectl[[:space:]]+delete[[:space:]]+namespace[[:space:]]+production<TAB>productionネームスペースの削除は実行できません
 ```
 
-**devcontainer.json（最小構成）**
+### 4. ネットワーク制御の確認（オプション）
 
-```json
-{
-  "name": "Claude Code Sandbox",
-  "image": "mcr.microsoft.com/devcontainers/base:ubuntu-22.04",
-  "postCreateCommand": "npm install -g @anthropic-ai/claude-code"
-}
-```
-
-devcontainer 内で実行するだけで、ホスト環境への影響をコンテナに封じ込められます。
-
----
-
-## ネットワーク制御（オプション）
-
-外部ネットワークへのアクセスを制限する場合は Docker Compose を使います。
+外部ネットワークを遮断したい場合は `.devcontainer/docker-compose.yml` も生成するか確認する。
 
 ```yaml
-# .devcontainer/docker-compose.yml
 version: '3.8'
 services:
   sandbox:
-    image: mcr.microsoft.com/devcontainers/base:ubuntu-22.04
+    image: {ベースイメージ}
     volumes:
       - ../:/workspace:cached
     networks:
@@ -140,74 +100,23 @@ services:
 networks:
   sandbox-net:
     driver: bridge
-    internal: true   # 外部ネットワークへのアクセスを遮断
+    internal: true
 ```
 
-```json
-{
-  "dockerComposeFile": "docker-compose.yml",
-  "service": "sandbox",
-  "workspaceFolder": "/workspace"
-}
+> **注意**: `internal: true` は外部通信を全て遮断する。`postCreateCommand` でのパッケージインストールが失敗するため、必要なものは事前にイメージに含めること。
+
+### 5. 完了報告
+
 ```
+## devcontainer 環境構築 完了
 
-> **注意**: `internal: true` を設定すると npm install などの外部通信もブロックされます。`postCreateCommand` でのパッケージインストールは事前にイメージに含めておくか、ネットワーク設定前に実行してください。
+- 生成ファイル:
+  - `.devcontainer/devcontainer.json`
+  - `.devcontainer/claude-settings.json`
+  - `.devcontainer/denylist.conf`
 
----
-
-## GitHub Actions での利用
-
-```yaml
-# .github/workflows/claude-agent.yml
-name: Claude Code Agent
-
-on:
-  issues:
-    types: [opened, assigned]
-
-jobs:
-  implement:
-    runs-on: ubuntu-latest
-    container:
-      image: mcr.microsoft.com/devcontainers/base:ubuntu-22.04
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup Claude Code
-        run: npm install -g @anthropic-ai/claude-code
-
-      - name: Setup denylist hook
-        run: |
-          mkdir -p ~/.claude
-          cat > ~/.claude/settings.json <<'EOF'
-          {
-            "hooks": {
-              "PreToolUse": [
-                {
-                  "matcher": "Bash",
-                  "hooks": [
-                    {
-                      "type": "command",
-                      "command": "DENYLIST_PATH=$GITHUB_WORKSPACE/scripts/denylist.conf $GITHUB_WORKSPACE/scripts/block-dangerous.sh"
-                    }
-                  ]
-                }
-              ]
-            }
-          }
-          EOF
-
-      - name: Run Claude Code Agent
-        env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-        run: |
-          claude --dangerously-skip-permissions "Issue #${{ github.event.issue.number }} を実装してください"
+次のステップ:
+- VS Code: "Reopen in Container" でコンテナを起動
+- CLI: `devcontainer up --workspace-folder . && devcontainer exec --workspace-folder . claude --dangerously-skip-permissions`
+- プロジェクト固有のdenyルールは `.devcontainer/denylist.conf` に追記してください
 ```
-
----
-
-## 関連ドキュメント
-
-- [--dangerously-skip-permissions の安全な利用ガイド](../../docs/dangerously-skip-permissions.md)
-- [denyリスト設定ファイル](../../scripts/denylist.conf)
-- [block-dangerous.sh](../../scripts/block-dangerous.sh)

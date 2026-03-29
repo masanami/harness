@@ -157,7 +157,7 @@ claude --dangerously-skip-permissions --no-update-check
 
 ### devcontainer 環境での利用
 
-devcontainer を使ったサンドボックス環境での実行については、`skills/sandboxed-run/SKILL.md` を参照してください。
+devcontainer の設定ファイルを自動生成するには `/sandboxed-run` スキルを実行してください。
 
 ---
 
