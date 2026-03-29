@@ -125,6 +125,6 @@ networks:
 
 次のステップ:
 - VS Code: "Reopen in Container" でコンテナを起動
-- CLI: `devcontainer up --workspace-folder . && devcontainer exec --workspace-folder . claude --dangerously-skip-permissions`
+- CLI: `devcontainer up --workspace-folder . && devcontainer exec --workspace-folder . codex --dangerously-bypass-approvals-and-sandbox`
 - プロジェクト固有のdenyルールは `.devcontainer/denylist.conf` に追記してください
 ```
