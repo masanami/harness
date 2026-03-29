@@ -115,6 +115,7 @@ claude --dangerously-skip-permissions
 |----------|------|
 | `terraform destroy` | Terraformによるインフラ全削除 |
 | `cdk destroy` | AWS CDKによるスタック削除 |
+| `cdktf destroy` | Terraform CDKによるスタック削除 |
 
 ### システム・権限系
 
