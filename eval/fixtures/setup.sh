@@ -110,10 +110,15 @@ echo ""
 # GitHub リポジトリ作成（オプション）
 if command -v gh &> /dev/null; then
   echo "GitHub リポジトリを作成しますか？ (y/n)"
-  read -r create_github
+  if [ -t 0 ]; then
+    read -r create_github || create_github="n"
+  else
+    create_github="n"
+    echo "非対話環境のため GitHub リポジトリ作成をスキップします。"
+  fi
   if [ "$create_github" = "y" ]; then
     echo "公開リポジトリとして作成しますか？ (y=public / n=private)"
-    read -r is_public
+    read -r is_public || is_public="n"
     if [ "$is_public" = "y" ]; then
       gh repo create "$REPO_NAME" --public --source=. --push
     else
