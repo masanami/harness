@@ -81,7 +81,6 @@ description: "devcontainer環境を構築する設定ファイルを生成する
 外部ネットワークを遮断したい場合は `.devcontainer/docker-compose.yml` も生成するか確認する。
 
 ```yaml
-version: '3.8'
 services:
   sandbox:
     image: {ベースイメージ}
