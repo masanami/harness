@@ -27,18 +27,14 @@ description: "devcontainer環境を構築する設定ファイルを生成する
 | Rust | `mcr.microsoft.com/devcontainers/rust` | - |
 | 不明 | `mcr.microsoft.com/devcontainers/base` | - |
 
-また、`README.md` およびパッケージファイル（`package.json`、`requirements.txt`、`go.mod`、`Cargo.toml` など）を確認し、コンテナ起動後に必要なセットアップコマンドを特定する。
+さらに、以下を確認してプロジェクトのパッケージ管理外でインストールが必要なシステムツールを探索する。
 
-| 検出結果 | セットアップコマンド |
-|---------|-----------------|
-| npm | `npm install` |
-| yarn | `yarn install` |
-| pnpm | `pnpm install` |
-| bun | `bun install` |
-| Python | `pip install -r requirements.txt` |
-| Go | `go mod download` |
-| Rust | `cargo fetch` |
-| README に記載あり | README の手順に従う |
+- `README.md` のセットアップ手順
+- `Makefile` / `scripts/` 内のセットアップ系スクリプト
+- `.github/workflows/` のCI設定（`apt install`、`brew install`、`curl ... | sh` などのパターン）
+- `docs/` 内のセットアップガイド
+
+検出したツールは `postCreateCommand` でのインストールコマンドに含める。
 
 ### 3. 設定ファイルの生成
 
@@ -53,7 +49,7 @@ description: "devcontainer環境を構築する設定ファイルを生成する
 | コンテナ名 | `{プロジェクト名} Sandbox` |
 | ベースイメージ | 手順2で検出したイメージ |
 | features | git、および言語に応じた feature |
-| postCreateCommand | Claude Code のインストール + `claude-settings.json` を `~/.claude/settings.json` にコピー + 手順2で検出したセットアップコマンド |
+| postCreateCommand | Claude Code のインストール + `claude-settings.json` を `~/.claude/settings.json` にコピー + 手順2で検出したシステムツールのインストール |
 | マウント | ローカルワークスペースを `/workspace` にバインド |
 | workspaceFolder | `/workspace` |
 | 環境変数 | `ANTHROPIC_API_KEY` をローカル環境から引き継ぐ |
