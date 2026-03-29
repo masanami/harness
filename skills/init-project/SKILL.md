@@ -238,6 +238,30 @@ Agent Teamsの各teammateはworktree隔離環境で動作するため、`.claude
 
 > **注意**: 生成する権限は `settings.json`（tracked）に書く。`settings.local.json`（gitignored）にはユーザー個人の追加権限（WebSearch, WebFetch等）を記載する運用とする。
 
+#### フックの構成
+
+`--dangerously-skip-permissions` を安全に使えるよう、`block-dangerous.sh` の PreToolUse フックも `settings.json` に含める。
+
+```json
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/block-dangerous.sh"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+既存の `hooks.PreToolUse` がある場合は、既存エントリを保持しつつ追記する（重複追加しない）。
+
 #### `.gitignore` の確認
 
 `.gitignore` に `.claude/settings.json` が含まれていないことを確認する。含まれている場合はユーザーに警告する（worktreeで権限が効かなくなるため）。
@@ -251,7 +275,7 @@ Agent Teamsの各teammateはworktree隔離環境で動作するため、`.claude
 
 次のステップ:
 - `CLAUDE.md` の内容を確認し、必要に応じて手動で調整してください
-- `.claude/settings.json` の権限を確認してください（Agent Teams worktree用）
+- `.claude/settings.json` の権限・フック設定を確認してください（Agent Teams worktree用）
 - 個人用の追加設定（WebSearch等）は `.claude/settings.local.json` に記載してください
 - 要件定義を開始するには: /define-requirements [テーマ]
 - チケットを作成するには: /create-ticket
