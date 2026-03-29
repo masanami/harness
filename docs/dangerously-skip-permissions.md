@@ -109,6 +109,13 @@ claude --dangerously-skip-permissions
 | `DROP DATABASE` | データベースの削除 |
 | `TRUNCATE TABLE` | テーブルデータの全削除 |
 
+### インフラ破壊系
+
+| パターン | 説明 |
+|----------|------|
+| `terraform destroy` | Terraformによるインフラ全削除 |
+| `cdk destroy` | AWS CDKによるスタック削除 |
+
 ### システム・権限系
 
 | パターン | 説明 |
