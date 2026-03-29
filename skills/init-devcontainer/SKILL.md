@@ -1,6 +1,6 @@
 ---
-name: sandboxed-run
-description: "devcontainer環境を構築する設定ファイルを生成する。Triggers on: '/sandboxed-run', 'devcontainerを設定', 'サンドボックス環境を作って'"
+name: init-devcontainer
+description: "devcontainer環境を構築する設定ファイルを生成する。Triggers on: '/init-devcontainer', 'devcontainerを設定', 'devcontainer環境を作って'"
 ---
 
 # devcontainer 環境構築
