@@ -49,7 +49,7 @@ description: "devcontainer環境を構築する設定ファイルを生成する
 | コンテナ名 | `{プロジェクト名} Sandbox` |
 | ベースイメージ | 手順2で検出したイメージ |
 | features | git、および言語に応じた feature |
-| postCreateCommand | Claude Code のインストール + `claude-settings.json` を `~/.claude/settings.json` にコピー + 手順2で検出したシステムツールのインストール |
+| postCreateCommand | Claude Code のインストール + `/workspace/.devcontainer/claude-settings.json` を `~/.claude/settings.json` にコピー + 手順2で検出したシステムツールのインストール |
 | マウント | ローカルワークスペースを `/workspace` にバインド |
 | workspaceFolder | `/workspace` |
 | 環境変数 | `ANTHROPIC_API_KEY` をローカル環境から引き継ぐ |
@@ -67,7 +67,7 @@ description: "devcontainer環境を構築する設定ファイルを生成する
         "hooks": [
           {
             "type": "command",
-            "command": "DENYLIST_PATH=/workspace/.devcontainer/denylist.conf /workspace/scripts/block-dangerous.sh"
+            "command": "/bin/sh -c 'DENYLIST_PATH=/workspace/.devcontainer/denylist.conf /workspace/scripts/block-dangerous.sh'"
           }
         ]
       }
@@ -127,4 +127,5 @@ networks:
 - VS Code: "Reopen in Container" でコンテナを起動
 - CLI: `devcontainer up --workspace-folder . && devcontainer exec --workspace-folder . codex --dangerously-bypass-approvals-and-sandbox`
 - プロジェクト固有のdenyルールは `.devcontainer/denylist.conf` に追記してください
+- `--dangerously-bypass-approvals-and-sandbox` の安全な運用については [セーフティガイド](../../docs/dangerously-skip-permissions.md) を参照
 ```
