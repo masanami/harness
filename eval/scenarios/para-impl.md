@@ -2,7 +2,7 @@
 
 ## スキル概要
 
-`/para-impl` は GitHub Issue を分析して実装を行うスキルです。単一 Issue の場合は実装→テスト→コミット→セルフレビュー→PR作成まで一貫して実行します。複数 Issue の場合は Agent Teams 構成を提案します。`-c N` 指定時はN個の実装計画を生成・比較・選定してから実装します。
+`/para-impl` は GitHub Issue を分析して実装を行うスキルです。単一 Issue の場合は実装→テスト→コミット（self-review・simplify・品質チェック含む）→プッシュ→PR作成まで一貫して実行します。複数 Issue の場合は Agent Teams 構成を提案します。`-c N` 指定時はN個の実装計画を生成・比較・選定してから実装します。
 
 **参照**: [SKILL.md](../../skills/para-impl/SKILL.md)
 
@@ -10,7 +10,7 @@
 
 ## 評価観点
 
-- **指示への追従率**: Phase 1-8 の全ステップを順序通り実行しているか
+- **指示への追従率**: Phase 1-7 の全ステップを順序通り実行しているか
 - **生成物の正確さ**: Issue の要件を満たすコード・テスト・PR が生成されているか
 - **副作用の有無**: スコープ外のファイル変更・不要なブランチ作成が発生していないか
 - **ユーザーへの確認タイミング**: 不明点・複数 Issue 時の Agent Teams 承認で確認しているか
@@ -42,11 +42,10 @@
   4. ブランチを `feature/issue-{番号}-add-greeting-function` 等の命名で作成する
   5. テストファイルを先に作成する（TDD）
   6. 実装コードを作成する
-  7. lint・テストを実行してパスすることを確認する
-  8. Conventional Commits 形式でコミットする
-  9. `/self-review` によるセルフレビューを実施する
-  10. `gh pr create` で PR を作成する（本文に `Closes #番号` を含む）
-  11. 実装サマリー・PRのURL・レビューしてほしいポイントを報告する
+  7. `/quality-check` で lint・テストを実行してパスすることを確認する
+  8. `/commit` スキルを呼び出す（self-review → simplify（推奨）→ quality-check → git commit の順で実行）
+  9. `git push` でブランチをプッシュし、`gh pr create` で PR を作成する（本文に `Closes #番号` を含む）
+  10. 実装サマリー・PRのURL・レビューしてほしいポイントを報告する
 
 - **合格基準**:
   - [ ] ブランチが `feature/issue-{番号}-` で始まる名前で作成されている
