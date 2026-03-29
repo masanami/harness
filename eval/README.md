@@ -109,7 +109,7 @@ mkdir -p eval/results/$(date +%Y-%m-%d)
 
 ## ディレクトリ構成
 
-```
+```text
 eval/
 ├── README.md               # このファイル（評価実行方法の説明）
 ├── scenarios/              # 評価シナリオ
