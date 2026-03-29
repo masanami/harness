@@ -20,6 +20,8 @@
 
 ## セットアップ
 
+> **Note**: `/init-project` を実行すると、以下のフック設定が `.claude/settings.json` に自動で追加されます。手動セットアップは不要です。
+
 ### 1. フックの設定
 
 `settings.json`（または `.claude/settings.json`）に以下を追加します。
