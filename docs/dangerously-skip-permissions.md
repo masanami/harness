@@ -48,7 +48,7 @@
 
 デフォルトのdenyリストは `scripts/denylist.conf` に定義されています。
 
-```
+```conf
 # 形式: PATTERN<TAB>MESSAGE  (区切り文字はタブ文字)
 rm[[:space:]]+(-[a-zA-Z]*r[a-zA-Z]*f|...)[[:space:]]+/[[:space:]]*$<TAB>rm -rf / は実行できません
 ```
@@ -128,7 +128,7 @@ claude --dangerously-skip-permissions
 
 ## カスタムdenyリストの書き方
 
-```
+```conf
 # コメント行（# で始まる）
 # 空行は無視される
 

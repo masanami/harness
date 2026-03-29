@@ -16,9 +16,10 @@ fi
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DENYLIST_FILE="${DENYLIST_PATH:-$SCRIPT_DIR/denylist.conf}"
 
-# denyリストファイルが存在しない場合はスキップ
-if [ ! -f "$DENYLIST_FILE" ]; then
-  exit 0
+# denyリストファイルが存在・読み取り可能でない場合はブロック（fail-close）
+if [ ! -r "$DENYLIST_FILE" ]; then
+  echo "BLOCKED: denyリストが見つからないか読み取れません: $DENYLIST_FILE" >&2
+  exit 2
 fi
 
 # denyリストを1行ずつ処理（タブ文字で PATTERN と MESSAGE を分割）
@@ -40,8 +41,13 @@ while IFS=$'\t' read -r PATTERN MESSAGE; do
     GREP_OPT="-iE"
   fi
 
-  # パターンにマッチした場合はブロック
-  if echo "$COMMAND" | grep -q $GREP_OPT "$PATTERN"; then
+  # パターンにマッチした場合はブロック（正規表現エラーもブロック）
+  echo "$COMMAND" | grep -q $GREP_OPT "$PATTERN"
+  GREP_STATUS=$?
+  if [ $GREP_STATUS -eq 2 ]; then
+    echo "BLOCKED: denyリストの正規表現が不正です: $PATTERN" >&2
+    exit 2
+  elif [ $GREP_STATUS -eq 0 ]; then
     echo "BLOCKED: ${MESSAGE}" >&2
     exit 2
   fi

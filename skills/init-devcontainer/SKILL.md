@@ -76,13 +76,19 @@ description: "devcontainer環境を構築する設定ファイルを生成する
 }
 ```
 
+#### `scripts/block-dangerous.sh`
+
+ハーネスの `scripts/block-dangerous.sh` をプロジェクトにコピーし、実行権限を付与する。
+これはコンテナ内のフック（`/workspace/scripts/block-dangerous.sh`）から参照される。
+
 #### `.devcontainer/denylist.conf`
 
 `scripts/denylist.conf` をコピーし、プロジェクト固有のルールをユーザーが追加できるようコメントを末尾に追加する。
 
-```
+```conf
 # プロジェクト固有のdenyルールをここに追加
-# 例: kubectl[[:space:]]+delete[[:space:]]+namespace[[:space:]]+production<TAB>productionネームスペースの削除は実行できません
+# 例（パターンとメッセージはタブ文字で区切る）:
+# kubectl[[:space:]]+delete[[:space:]]+namespace[[:space:]]+production	productionネームスペースの削除は実行できません
 ```
 
 ### 4. ネットワーク制御の確認（オプション）
@@ -112,6 +118,7 @@ networks:
 ## devcontainer 環境構築 完了
 
 - 生成ファイル:
+  - `scripts/block-dangerous.sh`
   - `.devcontainer/devcontainer.json`
   - `.devcontainer/claude-settings.json`
   - `.devcontainer/denylist.conf`
