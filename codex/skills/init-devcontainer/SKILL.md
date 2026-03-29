@@ -1,6 +1,6 @@
 ---
 name: init-devcontainer
-description: "devcontainer環境を構築する設定ファイルを生成する。Triggers on: '/init-devcontainer', 'devcontainerを設定', 'devcontainer環境を作って'"
+description: "devcontainer環境を構築する設定ファイルを生成する。Triggers on: '$init-devcontainer', '/init-devcontainer', 'devcontainerを設定', 'devcontainer環境を作って'"
 ---
 
 # devcontainer 環境構築
@@ -125,7 +125,7 @@ networks:
 
 次のステップ:
 - VS Code: "Reopen in Container" でコンテナを起動
-- CLI: `devcontainer up --workspace-folder . && devcontainer exec --workspace-folder . claude --dangerously-skip-permissions`
+- CLI: `devcontainer up --workspace-folder . && devcontainer exec --workspace-folder . codex --dangerously-bypass-approvals-and-sandbox`
 - プロジェクト固有のdenyルールは `.devcontainer/denylist.conf` に追記してください
-- `--dangerously-skip-permissions` の安全な運用については [セーフティガイド](../../docs/dangerously-skip-permissions.md) を参照
+- `--dangerously-bypass-approvals-and-sandbox` の安全な運用については [セーフティガイド](../../docs/dangerously-skip-permissions.md) を参照
 ```
