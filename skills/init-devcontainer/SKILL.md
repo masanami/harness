@@ -33,24 +33,17 @@ description: "devcontainer環境を構築する設定ファイルを生成する
 
 #### `.devcontainer/devcontainer.json`
 
-```json
-{
-  "name": "{プロジェクト名} Sandbox",
-  "image": "{検出したベースイメージ}",
-  "features": {
-    "ghcr.io/devcontainers/features/git:1": {},
-    "{言語に応じた feature}": {}
-  },
-  "postCreateCommand": "npm install -g @anthropic-ai/claude-code && mkdir -p ~/.claude && cp /workspace/.devcontainer/claude-settings.json ~/.claude/settings.json",
-  "mounts": [
-    "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached"
-  ],
-  "workspaceFolder": "/workspace",
-  "remoteEnv": {
-    "ANTHROPIC_API_KEY": "${localEnv:ANTHROPIC_API_KEY}"
-  }
-}
-```
+以下の要件を満たす内容で生成する。最新の devcontainer 仕様に従い、実際のスキーマに合わせて適切なフォーマットで記述すること。
+
+| 設定項目 | 内容 |
+|---------|------|
+| コンテナ名 | `{プロジェクト名} Sandbox` |
+| ベースイメージ | 手順2で検出したイメージ |
+| features | git、および言語に応じた feature |
+| postCreateCommand | Claude Code のインストール + `claude-settings.json` を `~/.claude/settings.json` にコピー |
+| マウント | ローカルワークスペースを `/workspace` にバインド |
+| workspaceFolder | `/workspace` |
+| 環境変数 | `ANTHROPIC_API_KEY` をローカル環境から引き継ぐ |
 
 #### `.devcontainer/claude-settings.json`
 
