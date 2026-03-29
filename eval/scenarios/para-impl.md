@@ -23,7 +23,7 @@
 
 - **前提**:
   - テスト用リポジトリに以下の内容で Issue が作成されている:
-    ```
+    ```text
     タイトル: add greeting function
     本文: utils.js に greet(name) 関数を追加する。引数に名前を受け取り "Hello, {name}!" を返す。テストも追加すること。
     ```
@@ -31,7 +31,7 @@
   - main ブランチが clean な状態
 
 - **入力**:
-  ```
+  ```text
   /para-impl {Issue番号}
   ```
 
@@ -81,7 +81,7 @@
   - main ブランチが clean な状態
 
 - **入力**:
-  ```
+  ```text
   /para-impl {Issue-A番号} {Issue-B番号}
   ```
 
@@ -116,14 +116,14 @@
 
 - **前提**:
   - テスト用リポジトリにサービス設計が問われる Issue が存在する:
-    ```
+    ```text
     タイトル: add user authentication
     本文: ユーザー認証機能を追加する。JWT またはセッションベースの認証のいずれかで実装すること。
     ```
   - main ブランチが clean な状態
 
 - **入力**:
-  ```
+  ```text
   /para-impl {Issue番号} -c 2
   ```
 
@@ -158,7 +158,7 @@
   - テスト用リポジトリに Issue #99999 は存在しない
 
 - **入力**:
-  ```
+  ```text
   /para-impl 99999
   ```
 
@@ -186,14 +186,14 @@
 
 - **前提**:
   - テスト用リポジトリに単一のファイル変更を求める Issue が存在する:
-    ```
+    ```text
     タイトル: add constant to config.js
     本文: config.js に MAX_RETRY = 3 の定数を追加する。
     ```
   - リポジトリには複数のファイルが存在する
 
 - **入力**:
-  ```
+  ```text
   /para-impl {Issue番号}
   ```
 

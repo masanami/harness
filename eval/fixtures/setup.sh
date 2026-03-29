@@ -70,7 +70,7 @@ npm install
 
 Claude Code で以下を実行:
 
-\`\`\`
+\`\`\`text
 /run-eval {スキル名} {TC番号}
 例: /run-eval self-review TC-01
 \`\`\`
