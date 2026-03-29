@@ -21,11 +21,11 @@ description: "devcontainer環境を構築する設定ファイルを生成する
 
 | 検出結果 | ベースイメージ | 追加 features |
 |---------|-------------|--------------|
-| Node.js | `mcr.microsoft.com/devcontainers/base:ubuntu-22.04` | `ghcr.io/devcontainers/features/node:1` |
-| Python | `mcr.microsoft.com/devcontainers/python:3.11` | - |
-| Go | `mcr.microsoft.com/devcontainers/go:1` | - |
-| Rust | `mcr.microsoft.com/devcontainers/rust:1` | - |
-| 不明 | `mcr.microsoft.com/devcontainers/base:ubuntu-22.04` | - |
+| Node.js | `mcr.microsoft.com/devcontainers/base` | `ghcr.io/devcontainers/features/node` |
+| Python | `mcr.microsoft.com/devcontainers/python` | - |
+| Go | `mcr.microsoft.com/devcontainers/go` | - |
+| Rust | `mcr.microsoft.com/devcontainers/rust` | - |
+| 不明 | `mcr.microsoft.com/devcontainers/base` | - |
 
 ### 3. 設定ファイルの生成
 
