@@ -44,7 +44,7 @@ cp "$SCRIPT_DIR/.eslintrc.json" .
 # 評価シナリオのコピー
 echo "評価シナリオをコピー中..."
 mkdir -p eval/scenarios
-cp "$HARNESS_DIR/eval/scenarios/"*.md eval/scenarios/ 2>/dev/null || true
+cp "$HARNESS_DIR/eval/scenarios/"*.md eval/scenarios/
 mkdir -p eval/results
 
 # .gitignore
@@ -91,6 +91,15 @@ EOF
 # git 初期化
 echo "git リポジトリを初期化中..."
 git init
+
+# git user.name/email が未設定の場合のフォールバック
+if ! git config user.name &>/dev/null; then
+  git config user.name "harness-eval"
+fi
+if ! git config user.email &>/dev/null; then
+  git config user.email "harness-eval@example.com"
+fi
+
 git add .
 git commit -m "chore: initial setup from harness-eval-fixtures"
 

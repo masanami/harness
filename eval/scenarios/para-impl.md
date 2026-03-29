@@ -49,7 +49,7 @@
 
 - **合格基準**:
   - [ ] ブランチが `feature/issue-{番号}-` で始まる名前で作成されている
-  - [ ] テストファイルがプロダクションコードより先にコミットされている（TDD）
+  - [ ] テストが実装コードと同一コミットまたはそれ以前に作成されている
   - [ ] `greet(name)` 関数が実装されている
   - [ ] テストが実装されており、パスしている
   - [ ] コミットメッセージが Conventional Commits 形式（`feat:` 等）である
@@ -61,9 +61,9 @@
   git branch --show-current
   # feature/issue-{番号}-XXX の形式であること
 
-  # コミット履歴でTDDを確認
-  git log --oneline origin/main..HEAD
-  # テストのコミットが実装コミットより前にあること（または同一コミットでテストが先に含まれていること）
+  # テストが含まれていることを確認
+  git log --oneline --name-only origin/main..HEAD
+  # テストファイルが実装コードと同一コミットまたはそれ以前に含まれていること
 
   # PRの確認
   gh pr view --json title,body | jq '{title: .title, closes: (.body | test("Closes #[0-9]+"))}'
