@@ -175,16 +175,46 @@ Agent Teamsの各teammateはworktree隔離環境で動作するため、`.claude
 }
 ```
 
-**deny の構成:**
+**deny の構成**（常に含める）:
 
-`${CLAUDE_PLUGIN_ROOT}/config/default-deny.conf` を読み込み、コメント・空行を除いた各行を `permissions.deny` の要素として追加する。
-
-```bash
-# default-deny.conf の読み込み例
-grep -v '^\s*#' "${CLAUDE_PLUGIN_ROOT}/config/default-deny.conf" | grep -v '^\s*$'
+```json
+{
+  "permissions": {
+    "deny": [
+      "Bash(git push --force:*)",
+      "Bash(git push -f:*)",
+      "Bash(git reset --hard:*)",
+      "Bash(git clean -f:*)",
+      "Bash(git branch -D:*)",
+      "Bash(git checkout -- .:*)",
+      "Bash(git restore .:*)",
+      "Bash(gh repo delete:*)",
+      "Bash(gh issue delete:*)",
+      "Bash(gh pr close:*)",
+      "Bash(gh api -X DELETE:*)",
+      "Bash(gh api --method DELETE:*)",
+      "Bash(rm -rf:*)",
+      "Bash(rm -r:*)",
+      "Bash(rmdir:*)",
+      "Bash(chmod:*)",
+      "Bash(chown:*)",
+      "Bash(curl -X DELETE:*)",
+      "Bash(curl -X PUT:*)",
+      "Bash(cdk destroy:*)",
+      "Bash(cdktf destroy:*)",
+      "Bash(terraform apply:*)",
+      "Bash(terraform destroy:*)",
+      "Bash(pulumi up:*)",
+      "Bash(pulumi destroy:*)",
+      "Bash(serverless deploy:*)",
+      "Bash(sls deploy:*)",
+      "Bash(kubectl apply:*)",
+      "Bash(kubectl delete:*)",
+      "Bash(docker push:*)"
+    ]
+  }
+}
 ```
-
-`default-deny.conf` はハーネスリポジトリで管理されており、エントリを追加・変更することでデフォルトの deny リストをカスタマイズできる。詳細は `config/default-deny.conf` のコメントを参照。
 
 **パッケージマネージャに応じた追加権限**:
 
