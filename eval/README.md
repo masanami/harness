@@ -107,16 +107,63 @@ mkdir -p eval/results/$(date +%Y-%m-%d)
 
 ---
 
+## テストリポジトリのセットアップ
+
+評価を実行するには、フィクスチャからテスト用リポジトリを作成します。
+
+```bash
+# harness リポジトリのルートから実行
+bash eval/fixtures/setup.sh [リポジトリ名]
+```
+
+作成されるもの:
+- フィクスチャコード（`src/utils.js`, `src/auth.js`, `src/legacy.js`）
+- 評価シナリオ（`eval/scenarios/` をコピー）
+- GitHub リポジトリ・評価用 Issues（任意）
+
+詳細は [eval/fixtures/README.md](fixtures/README.md) を参照。
+
+---
+
+## 評価の実行（`/run-eval` スキル）
+
+テストリポジトリで Claude Code を開き、以下を実行:
+
+```text
+/run-eval {スキル名} {TC番号}
+例: /run-eval self-review TC-01
+```
+
+スキルが以下をガイドします:
+1. **セットアップ**: ブランチ作成やコードの準備手順を案内
+2. **実行**: 対象スキルのコマンドを提示
+3. **判定**: 合格基準を1項目ずつ P/F/S で確認
+4. **記録**: `eval/results/{日付}/{スキル名}-{TC番号}.md` に自動保存
+
+---
+
 ## ディレクトリ構成
 
 ```text
 eval/
 ├── README.md               # このファイル（評価実行方法の説明）
+├── fixtures/               # テストリポジトリ テンプレート
+│   ├── README.md           # fixtures の説明
+│   ├── setup.sh            # テストリポジトリ作成スクリプト
+│   ├── CLAUDE.md           # テストリポジトリ用コーディング規約
+│   ├── package.json
+│   ├── .eslintrc.json
+│   ├── src/
+│   │   ├── utils.js        # クリーンなコード
+│   │   ├── auth.js         # 規約違反・セキュリティ問題あり
+│   │   └── legacy.js       # 技術負債あり
+│   └── tests/
+│       └── utils.test.js
 ├── scenarios/              # 評価シナリオ
 │   ├── self-review.md
 │   ├── para-impl.md
 │   └── reduce-debt.md
 └── results/                # 評価結果（.gitignore 推奨）
     └── YYYY-MM-DD/
-        └── {スキル名}.md
+        └── {スキル名}-{TC番号}.md
 ```
