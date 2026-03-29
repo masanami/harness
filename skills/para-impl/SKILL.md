@@ -113,7 +113,7 @@ GitHub Issue番号（複数可）とオプション: $ARGUMENTS
 
 ---
 
-### Phase 3-5: 実装・テスト・コミット
+### Phase 3-5: 実装・テスト
 
 #### 単一Issueの場合
 
@@ -129,14 +129,10 @@ GitHub Issue番号（複数可）とオプション: $ARGUMENTS
    - プロジェクトの依存関係をインストール（CLAUDE.mdまたはpackage.jsonの構成に従う）
 
 3. **実装**: Issue種別に応じたエージェントに委譲
-4. **テスト**: E2Eテスト（対象機能の場合、`skills/create-e2e/SKILL.md` の手順に従う）
-5. **コミットとプッシュ**
-   - 適切な粒度でコミット（Conventional Commits形式）
-   ```bash
-   git push -u origin {ブランチ名}
-   ```
+4. **品質チェック**: `/quality-check` を実行（実装中の早期エラー検出）
+5. **E2Eテスト**: 対象機能の場合、`skills/create-e2e/SKILL.md` の手順に従う
 
-> セルフレビューはPhase 6、PR作成はPhase 7で行う。
+> コミットはPhase 6、PR作成はPhase 7で行う。
 
 ---
 
@@ -177,16 +173,14 @@ Phase 1-2の分析結果をもとに、Agent Teams構成をユーザーに提案
 - origin/mainからブランチを作成
 - 依存関係のインストール
 
-**Phase 3-5（実装・テスト・コミット）:**
+**Phase 3-5（実装・テスト）:**
 - implement-feature/modify-featureエージェントの手順に従い実装
-- 品質チェック（lint, typecheck, test）
-- コミット（Conventional Commits形式）
+- `/quality-check` を実行（実装中の早期エラー検出）
 
-**Phase 6（セルフレビュー）:**
-- code-reviewer、design-reviewer、doc-verifierの観点でセルフレビュー
-- 指摘があればPhase 3に戻り修正
+**Phase 6（コミット）:**
+- `/commit` スキルを呼び出し（self-review → /simplify → /quality-check → git commit）
 
-**Phase 7（PR作成）:**
+**Phase 7（プッシュ・PR作成）:**
 - プッシュしてPR作成（本文に Closes #{番号} を含める）
 
 ### worktreeについて
@@ -234,16 +228,14 @@ Phase 1-2の分析結果をもとに、Agent Teams構成をユーザーに提案
 - {N}個の異なるアプローチの実装計画を生成
 - 比較レポートを作成し、推奨案を選定（またはユーザーに選定を求める）
 
-**Phase 3-5（実装・テスト・コミット）:**
+**Phase 3-5（実装・テスト）:**
 - 選定された計画に基づき、implement-feature/modify-featureエージェントの手順に従い実装
-- 品質チェック（lint, typecheck, test）
-- コミット（Conventional Commits形式）
+- `/quality-check` を実行（実装中の早期エラー検出）
 
-**Phase 6（セルフレビュー）:**
-- code-reviewer、design-reviewer、doc-verifierの観点でセルフレビュー
-- 指摘があればPhase 3に戻り修正
+**Phase 6（コミット）:**
+- `/commit` スキルを呼び出し（self-review → /simplify → /quality-check → git commit）
 
-**Phase 7（PR作成）:**
+**Phase 7（プッシュ・PR作成）:**
 - プッシュしてPR作成（本文に Closes #{番号} を含める）
 
 ### worktreeについて
@@ -270,22 +262,28 @@ Phase 1-2の分析結果をもとに、Agent Teams構成をユーザーに提案
 
 ---
 
-### Phase 6: セルフレビュー
+### Phase 6: コミット
 
-code-reviewer、design-reviewer、doc-verifierに委譲。指摘があればPhase 3に戻り修正する。
+`/commit` スキルを呼び出し、以下の手順でコミットを実施:
 
-> 複数Issueの場合、各teammateがセルフレビューを実施するため、リードエージェントとしてのこのPhaseはスキップする。
+1. セルフレビュー（self-review）
+2. コードの簡潔化（/simplify・推奨）
+3. 品質チェック（/quality-check）
+4. git commit（Conventional Commits形式）
+
+> 複数Issueの場合、各teammateがコミットを実施するため、リードエージェントとしてのこのPhaseはスキップする。
 
 ---
 
-### Phase 7: PR作成
+### Phase 7: プッシュ・PR作成
 
 ```bash
+git push -u origin {ブランチ名}
 gh pr create --title "{タイトル}" --body "{本文}" --base main
 ```
 - PR本文には必ず `Closes #番号` を含める（バグ修正の場合は `Fixes #番号`）
 
-> 複数Issueの場合、各teammateがPR作成を実施するため、リードエージェントとしてのこのPhaseはスキップする。
+> 複数Issueの場合、各teammateがプッシュ・PR作成を実施するため、リードエージェントとしてのこのPhaseはスキップする。
 
 ---
 
