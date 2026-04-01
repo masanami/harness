@@ -1,7 +1,7 @@
 ---
 name: auto-develop
 description: "要件docまたは親Issueから設計→チケット分解→実装→マージまで一気通貫で自律実行する。Triggers on: '/auto-develop'"
-argument-hint: "<要件docパス> | --from-issue <番号> [-i <番号>] [-c N] [--parallel] [--skip-design] [--note \"...\"]"
+argument-hint: "<要件docパス> | --from-issue <番号> [-i <番号>] [-c N] [--sequential] [--skip-design] [--note \"...\"]"
 model: opus
 disable-model-invocation: true
 ---
@@ -34,7 +34,7 @@ disable-model-invocation: true
 #### オプションフラグ
 
 - **`--candidates N`** (短縮: `-c N`): 設計候補数（Phase 2 で設計を N 案比較する。デフォルト: 1）
-- **`--parallel`**: 全チケットを並列実装する（デフォルト: 逐次）
+- **`--sequential`**: 全チケットを逐次実装する（デフォルト: 並列）
 - **`--skip-design`**: 設計フェーズ（Phase 2）をスキップする
 - **`--note "..."`**: 追加指示。全サブエージェントのプロンプトに注入する
 
@@ -43,14 +43,14 @@ disable-model-invocation: true
 ```bash
 # 要件docからフル実行（Phase 1→2→3→4→5）
 /auto-develop docs/req.md
-/auto-develop docs/req.md --parallel -c 2  # 設計2案比較 + 並列実装
+/auto-develop docs/req.md -c 2  # 設計2案比較 + 並列実装（デフォルト）
 
 # 要件docから設計スキップ（Phase 1→3→4→5）
 /auto-develop docs/req.md --skip-design
 
 # 親Issueから開始（Phase 2→3→4→5）
 /auto-develop --from-issue #42
-/auto-develop -i #42 --parallel
+/auto-develop -i #42 --sequential  # 逐次実装
 
 # 親Issueから設計スキップ（Phase 3→4→5）
 /auto-develop -i #42 --skip-design
@@ -292,13 +292,13 @@ Task の返却値から `parent`, `issues`, `dependencies` を取得する。JSO
 
 | parallel | 動作 |
 |----------|------|
-| false（デフォルト） | 逐次: 実装→マージ→次（issues配列の順序で依存を担保） |
-| true | 並列: ウェーブ内並列実装→逐次リベース&マージ |
+| true（デフォルト） | 並列: ウェーブ内並列実装→逐次リベース&マージ |
+| false（--sequential指定時） | 逐次: 実装→マージ→次（issues配列の順序で依存を担保） |
 
 
 ---
 
-#### parallel=false（デフォルト）: 逐次実装
+#### parallel=false（--sequential指定時）: 逐次実装
 
 各チケットに対して以下の Step A〜B を実行する。
 
@@ -410,7 +410,7 @@ Task の返却値を蓄積し、**次のチケットへ進む**。
 
 ---
 
-#### parallel=true: 依存関係を考慮した並列実装→逐次マージ
+#### parallel=true（デフォルト）: 依存関係を考慮した並列実装→逐次マージ
 
 依存関係グラフに基づき **ウェーブ方式** でチケットを並列実装する。同じウェーブ内のチケットは並列で実装し、ウェーブ単位で逐次リベース＆マージする。
 
@@ -534,8 +534,8 @@ Task の返却値を蓄積し、**次のチケットへ進む**。
 - **設計フェーズ**: Phase 2 で設計ドキュメントを生成し、Phase 3 のチケット分解に活用。`--skip-design` で省略可能（小規模変更・設計済みの場合）
 - **スキル・エージェント参照**: 各工程の詳細手順はスキル/エージェント定義ファイルを読み込んで従う。本スキルでは手順を重複記述しない
 - **依存関係の明示**: Phase 3 でチケット間の依存関係を分析し、結果JSONに `dependencies` マップとして返却。逐次モードでは `issues` 配列の順序で依存を担保し、並列モードではウェーブ方式で依存を尊重する
-- **逐次モード（デフォルト）**: チケットを1つずつ「実装→レビュー→マージ」のサイクルで処理。`issues` 配列の順序（依存先が先）で自然に解決する
-- **並列モード（--parallel）**: 依存関係グラフからウェーブを算出し、同一ウェーブ内のチケットを並列実装→逐次リベース&マージ。依存先が失敗した場合は依存元もスキップする
+- **並列モード（デフォルト）**: 依存関係グラフからウェーブを算出し、同一ウェーブ内のチケットを並列実装→逐次リベース&マージ。依存先が失敗した場合は依存元もスキップする
+- **逐次モード（--sequential）**: チケットを1つずつ「実装→レビュー→マージ」のサイクルで処理。`issues` 配列の順序（依存先が先）で自然に解決する
 - **設計比較モード（--candidates N）**: Phase 2 で設計を N 案比較→選定→実装は常に1回。設計比較は design スキル内で完結する
 - **追加指示（--note）**: 全サブエージェントプロンプトに追加指示を注入。環境固有の制約を伝達する
 - **エラー時はスキップ**: 止まらずマージまで進めて結果を報告

@@ -1,6 +1,6 @@
 {
   "name": "harness",
-  "version": "1.2.0",
+  "version": "1.4.1",
   "description": "AI駆動開発チームのための汎用ハーネスプラグイン",
   "author": {
     "name": "masanami"
