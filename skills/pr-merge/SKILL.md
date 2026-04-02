@@ -49,6 +49,20 @@ PR番号: $ARGUMENTS
    gh pr view $ARGUMENTS --json mergeable,mergeStateStatus
    ```
 
+4. **外部レビューの待機**
+   ```bash
+   gh pr view $ARGUMENTS --json reviews -q '.reviews | length'
+   ```
+   - レビューが未投稿の場合: 最大10回まで 60秒間隔で再確認する（最大約10分待機）
+   - 10回確認してもレビューが投稿されなければ、レビューなしとして続行
+   - レビューが投稿されたら状態を確認:
+     ```bash
+     gh pr view $ARGUMENTS --json reviews -q '.reviews[] | {author: .author.login, state: .state}'
+     ```
+   - `CHANGES_REQUESTED` のレビューがある場合はマージ不可（レビュー対応が必要）
+   - `COMMENTED` のレビューのみの場合はレビュー内容を確認し、重大な問題がなければマージ可
+   - `APPROVED` のレビューがある場合はそのままマージ可
+
 ### Phase 2: コンフリクト解消（必要な場合）
 
 mergeableが`CONFLICTING`の場合：
@@ -120,11 +134,15 @@ mergeableが`CONFLICTING`の場合：
 - 全てのCIチェックがパス
 - コンフリクトがない（または解消済み）
 - コードレビューで重大な問題がない
+- 外部レビューが `CHANGES_REQUESTED` 状態でないこと
+- 外部レビューの `COMMENTED` 内容に重大な指摘がないこと
 
 ### マージを保留する条件
 - CIが失敗している
 - 要件を満たしていない
 - セキュリティ上の懸念がある
+- レビューで `CHANGES_REQUESTED` が出ている（対応が必要）
+- `COMMENTED` レビューに重大な問題の指摘がある（対応が必要）
 
 ---
 

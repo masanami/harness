@@ -125,7 +125,7 @@ networks:
 
 次のステップ:
 - VS Code: "Reopen in Container" でコンテナを起動
-- CLI: `devcontainer up --workspace-folder . && devcontainer exec --workspace-folder . claude --dangerously-skip-permissions`
+- CLI: `devcontainer up --workspace-folder . && devcontainer exec --workspace-folder . claude`（セッション内で auto-mode を有効化）
 - プロジェクト固有のdenyルールは `.devcontainer/denylist.conf` に追記してください
-- `--dangerously-skip-permissions` の安全な運用については [セーフティガイド](../../docs/dangerously-skip-permissions.md) を参照
+- auto-mode の安全な運用については [セーフティガイド](../../docs/auto-mode-safety.md) を参照
 ```

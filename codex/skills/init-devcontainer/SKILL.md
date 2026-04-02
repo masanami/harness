@@ -127,5 +127,5 @@ networks:
 - VS Code: "Reopen in Container" でコンテナを起動
 - CLI: `devcontainer up --workspace-folder . && devcontainer exec --workspace-folder . codex --dangerously-bypass-approvals-and-sandbox`
 - プロジェクト固有のdenyルールは `.devcontainer/denylist.conf` に追記してください
-- `--dangerously-bypass-approvals-and-sandbox` の安全な運用については [セーフティガイド](../../docs/dangerously-skip-permissions.md) を参照
+- denyリストによる安全な運用については [セーフティガイド](../../docs/auto-mode-safety.md) を参照
 ```

@@ -245,14 +245,16 @@ Agent Teamsの各teammateはworktree隔離環境で動作するため、`.claude
 |---------|------------|
 | Docker | `Bash(docker:*)`, `Bash(docker compose:*)` |
 
-> **注意**: 生成する権限は `settings.json`（tracked）に書く。`settings.local.json`（gitignored）にはユーザー個人の追加権限（WebSearch, WebFetch等）を記載する運用とする。
-
 #### フックの構成
 
-`--dangerously-skip-permissions` を安全に使えるよう、`block-dangerous.sh` の PreToolUse フックも `settings.json` に含める。
+auto-mode での自律実行を安全に行えるよう、`block-dangerous.sh` の PreToolUse フックも `settings.json` に含める。worktree内のエージェントにも適用されるようにするため、`settings.json`（tracked）に出力する。
 
 ```json
 {
+  "permissions": {
+    "allow": ["...（上記の権限）"],
+    "deny": ["...（上記のdeny）"]
+  },
   "hooks": {
     "PreToolUse": [
       {
@@ -269,7 +271,7 @@ Agent Teamsの各teammateはworktree隔離環境で動作するため、`.claude
 }
 ```
 
-既存の `hooks.PreToolUse` がある場合は、既存エントリを保持しつつ追記する（重複追加しない）。
+既存の `settings.json` の `hooks.PreToolUse` がある場合は、既存エントリを保持しつつ追記する（重複追加しない）。
 
 #### `.gitignore` の確認
 
@@ -284,7 +286,7 @@ Agent Teamsの各teammateはworktree隔離環境で動作するため、`.claude
 
 次のステップ:
 - `CLAUDE.md` の内容を確認し、必要に応じて手動で調整してください
-- `.claude/settings.json` の権限・フック設定を確認してください（Agent Teams worktree用）
+- `.claude/settings.json` の権限設定とフック設定を確認してください
 - 個人用の追加設定（WebSearch等）は `.claude/settings.local.json` に記載してください
 - 要件定義を開始するには: /define-requirements [テーマ]
 - チケットを作成するには: /create-ticket

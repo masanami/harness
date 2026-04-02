@@ -385,11 +385,17 @@ Step A で `status` が `success` または `partial` の場合、Task tool で 
 - `skills/pr-review-respond/SKILL.md` — レビュー対応手順
 - `skills/pr-merge/SKILL.md` — マージ手順
 
-## Step 1: レビュー対応
+## Step 1: レビュー待ち & 対応
 
-pr-review-respond スキルの手順に従い、PR #{{PR_NUMBER}} のレビューコメントに対応する。
+まず、外部レビュー（CodeRabbit等）の投稿を待つ。
 
-レビューコメントがまだない場合は、最大3回まで 30秒間隔で再確認する。3回確認してもレビューがなければ、レビューなしとして Step 2 に進む。
+```bash
+gh pr view {{PR_NUMBER}} --json reviews -q '.reviews | length'
+```
+
+レビューがまだ投稿されていない場合は、最大10回まで 60秒間隔で再確認する（最大約10分）。10回確認してもレビューが投稿されなければ、レビューなしとして Step 2 に進む。
+
+レビューが投稿されたら、pr-review-respond スキルの手順に従い、PR #{{PR_NUMBER}} のレビューコメントに対応する。
 
 **Lv.0 モード**: 設計変更の提案は、合理的なら採用。大規模変更はスキップして理由をコメント。
 
